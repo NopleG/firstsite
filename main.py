@@ -38,10 +38,8 @@ def login():
         sql = text(f'SELECT * FROM testing WHERE name LIKE {name}')
         result = db.session.execute(sql)
         resrow = []
-
         for row in result:
-            for i in range(len(row) - 1):
-                resrow.append(row[i])
+            resrow.append(row)
 
         return render_template('login.html', info=resrow)
 
