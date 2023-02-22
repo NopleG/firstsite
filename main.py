@@ -12,7 +12,6 @@ db.init_app(app)
 
 
 
-
 class Data_Base1(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)
@@ -20,7 +19,7 @@ class Data_Base1(db.Model):
     price = db.Column(db.Float, nullable=False)
     site = db.Column(db.String, nullable=False)
 
-    def __repr__(self):
+    def repr(self):
         return '<Data_Base1 %r>' % self.id
 
 
@@ -35,11 +34,16 @@ def index():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        name = request.form['name']
-        sql = text('SELECT name FROM testing')
+        name = f"'{request.form['name']}'"
+        sql = text(f'SELECT * FROM testing WHERE name LIKE {name}')
         result = db.session.execute(sql)
-        names = [row[0] for row in result]
-        return names
+        resrow = []
+
+        for row in result:
+            for i in range(len(row) - 1):
+                resrow.append(row[i])
+
+        return render_template('login.html', info=resrow)
 
 
     else:
