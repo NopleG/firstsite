@@ -24,16 +24,14 @@
     </tr>
   </thead>
   <tbody>
-  {% for i in range(info |length) %}
-    {% for j in range(1) %}
-        <tr>
-            <td scope="row">{{info[i][j]}}</td>
-            <td scope="row">{{info[i][j + 1]}}</td>
-            <td scope="row">{{info[i][j + 2]}}</td>
-            <td scope="row">{{info[i][j + 3]}}</td>
-            <td scope="row">{{info[i][j + 4]}}</td>
-        </tr>
-    {% endfor %}
+  {% for i in info %}
+    <tr>
+        <td scope="row">{{i.id}}</td>
+        <td scope="row">{{i.url}}</td>
+        <td scope="row">{{i.name}}</td>
+        <td scope="row">{{i.price}}</td>
+        <td scope="row">{{i.site}}</td>
+    </tr>
   {% endfor %}
   </tbody>
 </table>

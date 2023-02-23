@@ -13,6 +13,7 @@ db.init_app(app)
 
 
 class Data_Base1(db.Model):
+    __tablename__ = 'testing'
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
@@ -34,14 +35,14 @@ def index():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        name = f"'{request.form['name']}'"
+        name = f"%{request.form['name']}%"
         sql = text(f'SELECT * FROM testing WHERE name LIKE {name}')
-        result = db.session.execute(sql)
+        result = Data_Base1.query.filter(Data_Base1.name.like(name)).all()
         resrow = []
-        for row in result:
-            resrow.append(row)
+        # for row in result:
+        #     resrow.append(row)
 
-        return render_template('login.html', info=resrow)
+        return render_template('login.html', info=result)
 
 
     else:
