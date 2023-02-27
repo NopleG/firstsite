@@ -86,7 +86,7 @@ def editNote(id):
             row.url3 = request.form['url3']
             row.url4 = request.form['url4']
             db.session.commit()
-            return redirect('addNote.html')
+            return redirect(url_for('editNote', id=row.id))
         return render_template('editNote.html', info=row)
     else:
         return render_template('index.html')

@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container">
-    <form method="post" action="/editNote">
+    <form method="post" action="/editNote/{{info.id}}">
     <div id="first" class="mb-3">
     <label for="name" class="form-label">Название товара</label>
     <input name="name" type="text" class="form-control" id="name" value="{{info.name}}">
