@@ -11,29 +11,41 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
+class Listing(db.Model):
+    __tablename__ = 'listing'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, db.ForeignKey('goods.url'), nullable=False)
+    url1 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
+    url2 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
+    url3 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
+    url4 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
 
-class Data_Base1(db.Model):
-    __tablename__ = 'testing'
+    url_1 = db.relationship("Goods", foreign_keys=url1, lazy='select', backref='listing1')
+    url_2 = db.relationship("Goods", foreign_keys=url2, lazy='select', backref='listing2')
+    url_3 = db.relationship("Goods", foreign_keys=url3, lazy='select', backref='listing3')
+    url_4 = db.relationship("Goods", foreign_keys=url4, lazy='select', backref='listing4')
+
+
+
+class Goods(db.Model):
+    __tablename__ = 'goods'
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     price = db.Column(db.Float, nullable=False)
     site = db.Column(db.String, nullable=False)
 
-    def repr(self):
-        return '<Data_Base1 %r>' % self.id
 
-class Data_Base2(db.Model):
-    __tablename__ = 'testing1'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    url1 = db.Column(db.String, nullable=False)
-    url2 = db.Column(db.String, nullable=False)
-    url3 = db.Column(db.String, nullable=False)
-    url4 = db.Column(db.String, nullable=False)
 
 # with app.app_context():
 #     db.create_all()
+
+@app.route("/view")
+def view():
+    result = Listing.query.all()
+    # g = Listing.url_1.name
+    return render_template('view.html', info=result, pr=g)
+
 
 @app.route("/")
 def index():
@@ -44,7 +56,7 @@ def index():
 def login():
     if request.method == "POST":
         name = f"%{request.form['name']}%"
-        result = Data_Base1.query.filter(Data_Base1.name.like(name)).all()
+        result = Goods.query.filter(Goods.name.like(name)).all()
 
         return render_template('login.html', info=result)
 
@@ -61,7 +73,7 @@ def addNote():
         url2 = request.form['url2']
         url3 = request.form['url3']
         url4 = request.form['url4']
-        data = Data_Base2(name=name, url1=url1, url2=url2, url3=url3, url4=url4)
+        data = Listing(name=name, url1=url1, url2=url2, url3=url3, url4=url4)
         db.session.add(data)
         db.session.commit()
         return render_template('addNote.html')
@@ -69,16 +81,13 @@ def addNote():
         return render_template('addNote.html')
 
 
-@app.route("/view")
-def view():
-    result = Data_Base2.query.all()
-    return render_template('view.html', info=result)
+
 
 
 @app.route("/editNote/<int:id>/", methods=["GET", "POST"])
 def editNote(id):
     if id > 0:
-        row = Data_Base2.query.filter(Data_Base2.id == id).first()
+        row = Listing.query.filter(Listing.id == id).first()
         if request.method == 'POST':
             row.name = request.form['name']
             row.url1 = request.form['url1']
