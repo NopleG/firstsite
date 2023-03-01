@@ -11,19 +11,26 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
+class PriceList(db.Model):
+    tablename = 'price_list'
+    id = db.Column(db.Integer, primary_key=True)
+    good_id = db.Column(db.Integer(), db.ForeignKey('goods.id'), nullable=True)
+    created_on = db.Column(db.DateTime())
+    price = db.Column(db.Float, nullable=False)
+
 class Listing(db.Model):
     __tablename__ = 'listing'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, db.ForeignKey('goods.url'), nullable=False)
+    name = db.Column(db.String, nullable=False)
     url1 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url2 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url3 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url4 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
 
-    url_1 = db.relationship("Goods", foreign_keys=url1, lazy='select', backref='listing1')
-    url_2 = db.relationship("Goods", foreign_keys=url2, lazy='select', backref='listing2')
-    url_3 = db.relationship("Goods", foreign_keys=url3, lazy='select', backref='listing3')
-    url_4 = db.relationship("Goods", foreign_keys=url4, lazy='select', backref='listing4')
+    url_1 = db.relationship("Goods", foreign_keys=url1, lazy='select', backref=db.backref('listing1', lazy='select'))
+    url_2 = db.relationship("Goods", foreign_keys=url2, lazy='select', backref=db.backref('listing2', lazy='select'))
+    url_3 = db.relationship("Goods", foreign_keys=url3, lazy='select', backref=db.backref('listing3', lazy='select'))
+    url_4 = db.relationship("Goods", foreign_keys=url4, lazy='select', backref=db.backref('listing4', lazy='select'))
 
 
 
@@ -43,7 +50,6 @@ class Goods(db.Model):
 @app.route("/view")
 def view():
     result = Listing.query.all()
-    # g = Listing.url_1.name
     return render_template('view.html', info=result, pr=g)
 
 
@@ -99,6 +105,18 @@ def editNote(id):
         return render_template('editNote.html', info=row)
     else:
         return render_template('index.html')
+
+
+@app.route("/priceList/<int:id>/", methods=["GET", "POST"])
+def priceList(id):
+    if request.method == 'POST':
+        pass
+    result = PriceList.query.filter(PriceList.good_id == id).all()
+
+    for i in result:
+        print(i.price)
+    return render_template('priceList.html', info=result, id=id)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
