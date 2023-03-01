@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import sqlite3
 import os
+from sqlalchemy import desc
 from config import DB_CONNECTION
 
 app = Flask(__name__)
@@ -111,10 +112,11 @@ def editNote(id):
 def priceList(id):
     if request.method == 'POST':
         pass
-    result = PriceList.query.filter(PriceList.good_id == id).all()
+    result = PriceList.query.filter(PriceList.good_id == id).order_by(desc(PriceList.created_on)).all()
 
     for i in result:
         print(i.price)
+        print(i.created_on)
     return render_template('priceList.html', info=result, id=id)
 
 

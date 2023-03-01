@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="container">
-        <form method="post" action="/priceList/{{id}}">
+        <form method="get" action="/priceList/{{id}}">
             <table class="table">
   <thead>
     <tr>
@@ -16,9 +16,9 @@
     </tr>
   </thead>
   <tbody>
-  {% for i in result %}
+  {% for i in info %}
     <tr>
-        <td scope="row">{{i.price}}</td>
+        <td scope="row" >{{i.price}}</td>
         <td scope="row">{{i.created_on}}</td>
     </tr>
   {% endfor %}
