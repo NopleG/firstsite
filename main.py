@@ -23,17 +23,20 @@ class Listing(db.Model):
     __tablename__ = 'listing'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    recommend_price = db.Column(db.Float, nullable=True)
     url1 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url2 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url3 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
     url4 = db.Column(db.String, db.ForeignKey('goods.url'), nullable=True)
+    my_url = db.Column(db.String, nullable=True)
 
     url_1 = db.relationship("Goods", foreign_keys=url1, lazy='select', backref=db.backref('listing1', lazy='select'))
     url_2 = db.relationship("Goods", foreign_keys=url2, lazy='select', backref=db.backref('listing2', lazy='select'))
     url_3 = db.relationship("Goods", foreign_keys=url3, lazy='select', backref=db.backref('listing3', lazy='select'))
     url_4 = db.relationship("Goods", foreign_keys=url4, lazy='select', backref=db.backref('listing4', lazy='select'))
 
-
+# with app.app_context():
+#     db.create_all()
 
 class Goods(db.Model):
     __tablename__ = 'goods'
@@ -45,13 +48,14 @@ class Goods(db.Model):
 
 
 
-# with app.app_context():
-#     db.create_all()
 
-@app.route("/view")
-def view():
-    result = Listing.query.all()
-    return render_template('view.html', info=result, pr=g)
+
+@app.route("/view", methods=["GET", "POST"])
+@app.route("/view/<int:page>", methods=["GET", "POST"])
+def view(page=1):
+
+    info = Listing.query.paginate(page=page, per_page=3)
+    return render_template('view.html', info=info)
 
 
 @app.route("/")
